@@ -1,2 +1,2 @@
 # ReadonlyMailboxAccess
-How to manager read only access to exchange mailboxes
+How to manage read only access to exchange mailboxes
