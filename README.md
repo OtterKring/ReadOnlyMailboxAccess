@@ -6,25 +6,25 @@ What do you do if a co-worker quits and someone must continue working with his/h
 * export to pst? ... which means duplicating data and then maybe loose it somewhere?
 * give the person access to the mailbox? ... probably, but how much access?
 
-If you are managing Microsoft Exchange you may already have discovered that there is a "ReadPermission" parameter for the Add-MailboxPermission cmdlet, but it does not work. At least I never made it work and found a lot of evidence on the internet that this parameter doesn't, indeed.
+If you are managing Microsoft Exchange you may already have discovered that there is a "ReadPermission" parameter for the `Add-MailboxPermission` cmdlet, but it does not work. At least I never made it work and found a lot of evidence on the internet that this parameter doesn't, indeed.
 
 What you CAN do, however, is give folder base permissions instead. This works just fine.
 
-Paul Cunningham wrote a [nice article](https://practical365.com/exchange-server/grant-read-access-exchange-mailbox/) about the topic along with a script doing just that (Thank you!). Unfortunately, his script only works for mailboxes used in an all english environment. In my environment, however, I have to deal with English, German, Russion, Chinese, you name it. And you don't want to put it all necessary folders in all languages.
+_Paul Cunningham_ wrote a [nice article](https://practical365.com/exchange-server/grant-read-access-exchange-mailbox/) about the topic along with a script doing just that (Thank you!). Unfortunately, his script only works for mailboxes used in an all english environment. In my environment, however, I have to deal with English, German, Russian, Chinese, you name it. And you don't want to put in all necessary folders in all languages.
 
 Lucky us, Microsoft implemented a folder type attribute, which always is in english. So I took Mr Cunningham's scripts and rewrote them to my use, using folder types instead of names (leaving out those not relevant for a user) and upgraded it a bit with additional checks, bells and whistles.
 
 You will find 3 scripts here (no pipeline support):
 
-### Add-MailboxUserFolderPermissions.ps1 -Mailbox user -User user/group -Access accesstype
+### `Add-MailboxUserFolderPermissions.ps1 -Mailbox user -User user/group -Access accesstype`
 
-... to add permissions for a user or (universal security distribution (!)) group to a mailbox. The accesstype matches the permission types of the standard Add-MailboxFolderPermission cmdlet.
+... to add permissions for a user or (universal security distribution (!)) group to a mailbox. The accesstype matches the permission types of the standard `Add-MailboxFolderPermission` cmdlet.
 
-### Get-MailboxUserFolderPermissions.ps1 -Mailbox user
+### `Get-MailboxUserFolderPermissions.ps1 -Mailbox user`
 
 ... to show the current state of user permissions on the mailbox's folders. I recommend piping the output to Out-Gridview since some people have A LOT of folders!
 
-### Remove-MailboxUserFolderPermissions.ps1 -Mailbox user -User user/group
+### `Remove-MailboxUserFolderPermissions.ps1 -Mailbox user -User user/group`
 
 ... to remove any folder permissions set for the give user or group.
 
@@ -37,7 +37,7 @@ You will find 3 scripts here (no pipeline support):
 Folder Permissions for groups require a mail-enables universal security group. This is mandatory on Exchange 2016+ and only one way to get it:
 
 * Create a universal security group in Active-Directory (NO Distribution Group setting here!)
-* run a Get-Group | Enable-DistributionGroup in your Exchange Management console for the newly created group
+* run a `Get-Group | Enable-DistributionGroup` in your Exchange Management console for the newly created group
 
 Creating a universal distribution group directly in Exchange **does not work**! It must be security first!
 
