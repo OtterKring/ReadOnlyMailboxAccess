@@ -102,11 +102,11 @@ function Get-MailboxFolderIdentity {
         [Parameter(Mandatory=$true)]
         $FolderInfo
     )
-        if ($FolderInfo.FolderType -cne "Root") {
+<#         if ($FolderInfo.FolderType -cne "Root") {
             $FolderInfo.FolderPath = $FolderInfo.FolderPath -Replace '/','\'
         } else {
             $FolderInfo.FolderPath = '\'
-        }
+        } #>
         "$($PrimarySMTPAddress):$($FolderInfo.FolderPath)"
     }
 
@@ -149,7 +149,7 @@ Write-Debug $PrimarySMTPAddress
 Write-Host 'Collecting folder information ...'
 $MailboxFolders = Get-MailboxFolderStatistics $Mailbox `
                     | Where-Object {$IncludedFolderTypes -ceq $_.FolderType} `
-                    | Select-Object FolderPath,FolderType
+                    | Select-Object FolderID,FolderPath,FolderType
 $MailboxFolderCount = $Mailboxfolders.count
 
 $count = 0

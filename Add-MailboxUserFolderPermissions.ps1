@@ -111,12 +111,12 @@ function Get-MailboxFolderIdentity {
         [Parameter(Mandatory=$true)]
         $FolderInfo
     )
-        if ($FolderInfo.FolderType -cne "Root") {
+<#         if ($FolderInfo.FolderType -cne "Root") {
             $FolderInfo.FolderPath = $FolderInfo.FolderPath -Replace '/','\'
         } else {
             $FolderInfo.FolderPath = '\'
-        }
-        "$($PrimarySMTPAddress):$($FolderInfo.FolderPath)"
+        } #>
+        "$($PrimarySMTPAddress):$($FolderInfo.FolderID)"
     }
 
 
@@ -157,7 +157,7 @@ if ($PrimarySMTPAddress -isnot [string]) {
 Write-Host 'Collecting folder information ...'
 $MailboxFolders = Get-MailboxFolderStatistics $Mailbox `
                     | Where-Object {$IncludedFolderTypes -ceq $_.FolderType} `
-                    | Select-Object FolderPath,FolderType
+                    | Select-Object FolderID,FolderPath,FolderType
 $MailboxFolderCount = $MailboxFolders.count
 
 $count = 0
@@ -167,11 +167,11 @@ foreach ($MailboxFolder in $MailboxFolders)
     $count++
     Write-Progress -Activity "Enumerating $MailboxFolderCount folders ..." -Status "$count folders processed" -PercentComplete ($count*100/$MailboxFolderCount) -ID 1
     $FolderIdentity = Get-MailboxFolderIdentity -PrimarySMTPAddress $PrimarySMTPAddress -FolderInfo $MailboxFolder
-    Write-Verbose "Adding $User to $FolderIdentity with $Access permissions"
+    Write-Verbose "Adding $User to $($MailboxFolder.FolderPath) with $Access permissions"
     try
     {
         Add-MailboxFolderPermission -Identity $FolderIdentity -User $User -AccessRights $Access -ErrorAction STOP `
-        | Select-Object @{Name='FolderPath';Expression={$_.Identity -replace '^.*:',''}},FolderName,User,AccessRights
+        | Select-Object @{Name='FolderPath';Expression={$MailboxFolder.FolderPath}},FolderName,User,AccessRights
     }
     catch
     {

@@ -107,12 +107,12 @@ param (
     [Parameter(Mandatory=$true)]
     $FolderInfo
 )
-    if ($FolderInfo.FolderType -cne "Root") {
+<#     if ($FolderInfo.FolderType -cne "Root") {
         $FolderInfo.FolderPath = $FolderInfo.FolderPath -Replace '/','\'
     } else {
         $FolderInfo.FolderPath = '\'
-    }
-    "$($PrimarySMTPAddress):$($FolderInfo.FolderPath)"
+    } #>
+    "$($PrimarySMTPAddress):$($FolderInfo.FolderID)"
 }
 
 
@@ -155,7 +155,7 @@ if ($PrimarySMTPAddress -isnot [string]) {
 Write-Host 'Collecting folder information ...'
 $MailboxFolders = Get-MailboxFolderStatistics $Mailbox `
                     | Where-Object {$IncludedFolderTypes -ceq $_.FolderType} `
-                    | Select-Object FolderPath,FolderType
+                    | Select-Object FolderID,FolderPath,FolderType
 $MailboxFolderCount = $MailboxFolders.count
 # Distinguish, if a $user paramater was supplied or not (different call to Get-MailboxFolderPermission)
 $count = 0
@@ -167,7 +167,7 @@ if ([bool]$PSBoundParameters.user) {
         Write-Progress -Activity "Enumerating $MailboxFolderCount folders ..." -Status "$count folders processed" -PercentComplete ($count*100/$MailboxFolderCount) -ID 1
         $FolderIdentity = Get-MailboxFolderIdentity -PrimarySMTPAddress $PrimarySMTPAddress -FolderInfo $MailboxFolder
         Get-MailboxFolderPermission -Identity $FolderIdentity -User $User -ErrorAction SilentlyContinue `
-        | Select-Object @{Name='FolderPath';Expression={$_.Identity -replace '^.*:',''}},FolderName,User,AccessRights
+        | Select-Object @{Name='FolderPath';Expression={$MailboxFolder.FolderPath}},FolderName,User,AccessRights
     }
 } else {
     foreach ($MailboxFolder in $MailboxFolders)
@@ -176,7 +176,7 @@ if ([bool]$PSBoundParameters.user) {
         Write-Progress -Activity "Enumerating $MailboxFolderCount folders ..." -Status "$count folders processed" -PercentComplete ($count*100/$MailboxFolderCount) -ID 1
         $FolderIdentity = Get-MailboxFolderIdentity -PrimarySMTPAddress $PrimarySMTPAddress -FolderInfo $MailboxFolder
         Get-MailboxFolderPermission -Identity $FolderIdentity  -ErrorAction SilentlyContinue `
-        | Select-Object @{Name='FolderPath';Expression={$_.Identity -replace '^.*:',''}},FolderName,User,AccessRights
+        | Select-Object @{Name='FolderPath';Expression={$MailboxFolder.FolderPath}},FolderName,User,AccessRights
     }
 }
 Write-Progress -Activity "Enumerating $MailboxFolderCount folders ..." -Completed -ID 1
