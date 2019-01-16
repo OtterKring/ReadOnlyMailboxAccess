@@ -46,7 +46,10 @@ Creating a universal distribution group directly in Exchange **does not work**! 
 
 ### 2) "/" in mailbox folder names
 
-Back in the days of Outook 2000/XP and before, whenever you added a "/" in the name of a folder in Outlook, it would split the name at that position and create a subfolder from the second half. Fortunately, this behavior is gone by know. Nevertheless, Exchange **still** cannot process foldernames with "/", at least not in the way I have written the script (state of 2018-11-12). Maybe you can exchange the character before setting the permissions, but I haven't tried, yet. I will update this, as soon as I know.
+~~Back in the days of Outook 2000/XP and before, whenever you added a "/" in the name of a folder in Outlook, it would split the name at that position and create a subfolder from the second half. Fortunately, this behavior is gone by know. Nevertheless, Exchange **still** cannot process foldernames with "/", at least not in the way I have written the script (state of 2018-11-12). Maybe you can exchange the character before setting the permissions, but I haven't tried, yet. I will update this, as soon as I know.~~
+
+I did it!
+The key was using the FolderID instead of the FolderPath to identify the folders. Thank you Simon Abfalter for this tip on [technet](https://social.technet.microsoft.com/Forums/en-US/a7706dc3-67a4-4a8d-99b0-3de879e9554b/question-marks-and-forwardslashes-in-outlook-folder-names-and-how-to-use-with). Now all three scripts are supporting foldername with forward-slashes in their names.
 
 
 Good luck!
