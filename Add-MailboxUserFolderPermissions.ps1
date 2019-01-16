@@ -170,7 +170,8 @@ foreach ($MailboxFolder in $MailboxFolders)
     Write-Verbose "Adding $User to $FolderIdentity with $Access permissions"
     try
     {
-        Add-MailboxFolderPermission -Identity $FolderIdentity -User $User -AccessRights $Access -ErrorAction STOP
+        Add-MailboxFolderPermission -Identity $FolderIdentity -User $User -AccessRights $Access -ErrorAction STOP `
+        | Select-Object @{Name='FolderPath';Expression={$_.Identity -replace '^.*:',''}},FolderName,User,AccessRights
     }
     catch
     {

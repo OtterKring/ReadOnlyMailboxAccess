@@ -166,7 +166,8 @@ if ([bool]$PSBoundParameters.user) {
         $count++
         Write-Progress -Activity "Enumerating $MailboxFolderCount folders ..." -Status "$count folders processed" -PercentComplete ($count*100/$MailboxFolderCount) -ID 1
         $FolderIdentity = Get-MailboxFolderIdentity -PrimarySMTPAddress $PrimarySMTPAddress -FolderInfo $MailboxFolder
-        Get-MailboxFolderPermission -Identity $FolderIdentity -User $User -ErrorAction SilentlyContinue
+        Get-MailboxFolderPermission -Identity $FolderIdentity -User $User -ErrorAction SilentlyContinue `
+        | Select-Object @{Name='FolderPath';Expression={$_.Identity -replace '^.*:',''}},FolderName,User,AccessRights
     }
 } else {
     foreach ($MailboxFolder in $MailboxFolders)
@@ -174,7 +175,8 @@ if ([bool]$PSBoundParameters.user) {
         $count++
         Write-Progress -Activity "Enumerating $MailboxFolderCount folders ..." -Status "$count folders processed" -PercentComplete ($count*100/$MailboxFolderCount) -ID 1
         $FolderIdentity = Get-MailboxFolderIdentity -PrimarySMTPAddress $PrimarySMTPAddress -FolderInfo $MailboxFolder
-        Get-MailboxFolderPermission -Identity $FolderIdentity  -ErrorAction SilentlyContinue
+        Get-MailboxFolderPermission -Identity $FolderIdentity  -ErrorAction SilentlyContinue `
+        | Select-Object @{Name='FolderPath';Expression={$_.Identity -replace '^.*:',''}},FolderName,User,AccessRights
     }
 }
 Write-Progress -Activity "Enumerating $MailboxFolderCount folders ..." -Completed -ID 1
