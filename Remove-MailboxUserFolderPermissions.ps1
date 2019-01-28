@@ -107,7 +107,7 @@ function Get-MailboxFolderIdentity {
         } else {
             $FolderInfo.FolderPath = '\'
         } #>
-        "$($PrimarySMTPAddress):$($FolderInfo.FolderPath)"
+        "$($PrimarySMTPAddress):$($FolderInfo.FolderID)"
     }
 
 
