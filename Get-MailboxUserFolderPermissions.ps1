@@ -62,12 +62,13 @@ param (
                     ([bool](Get-Mailbox $_ -ErrorAction SilentlyContinue)) `
                     -or (([bool](Get-Command Get-RemoteMailbox)) -and ([bool](Get-RemoteMailbox $_ -ErrorAction SilentlyContinue))) `
                     -or ([bool](Get-DistributionGroup $_ -ErrorAction SilentlyContinue)) `
+                    -or ([bool](Get-MailUser $_ -ErrorAction SilentlyContinue)) `
                     -or ($_ -eq 'Anonymous') `
                     -or ($_ -eq 'Default')
                     ) {
                     $true
                 } else {
-                    Throw "$_ does not resolve to a mailbox on exchange, Default or Anonymous!"
+                    Throw "$_ does not resolve to a mailbox, remote mailbox, distribution group, mailuser, Default or Anonymous!"
                 }
             } else {
                 Throw "Exchange Cmdlets not available!"
