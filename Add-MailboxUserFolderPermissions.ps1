@@ -169,15 +169,19 @@ foreach ($MailboxFolder in $MailboxFolders)
     Write-Progress -Activity "Enumerating $MailboxFolderCount folders ..." -Status "$count folders processed" -PercentComplete ($count*100/$MailboxFolderCount) -ID 1
     $FolderIdentity = Get-MailboxFolderIdentity -PrimarySMTPAddress $PrimarySMTPAddress -FolderInfo $MailboxFolder
     Write-Verbose "Adding $User to $($MailboxFolder.FolderPath) with $Access permissions"
-    try
-    {
-        Add-MailboxFolderPermission -Identity $FolderIdentity -User $User -AccessRights $Access -ErrorAction STOP `
-        | Select-Object @{Name='FolderPath';Expression={$MailboxFolder.FolderPath}},FolderName,User,AccessRights
+
+    if (-not(Get-MailboxFolderPermission -Identity $FolderIdentity -User $User)) {
+        try
+        {
+            Add-MailboxFolderPermission -Identity $FolderIdentity -User $User -AccessRights $Access -ErrorAction SilentlyContinue `
+            | Select-Object @{Name='FolderPath';Expression={$MailboxFolder.FolderPath}},FolderName,User,AccessRights
+        }
+        catch
+        {
+            Write-Error $_.Exception.Message
+        }        
     }
-    catch
-    {
-        Write-Error $_.Exception.Message
-    }
+
 }
 
 
