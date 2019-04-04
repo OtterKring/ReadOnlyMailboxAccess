@@ -170,7 +170,7 @@ foreach ($MailboxFolder in $MailboxFolders)
     $FolderIdentity = Get-MailboxFolderIdentity -PrimarySMTPAddress $PrimarySMTPAddress -FolderInfo $MailboxFolder
     Write-Verbose "Adding $User to $($MailboxFolder.FolderPath) with $Access permissions"
 
-    if (-not(Get-MailboxFolderPermission -Identity $FolderIdentity -User $User)) {
+    if (-not(Get-MailboxFolderPermission -Identity $FolderIdentity -User $User -ErrorAction SilentlyContinue)) {
         try
         {
             Add-MailboxFolderPermission -Identity $FolderIdentity -User $User -AccessRights $Access -ErrorAction SilentlyContinue `
